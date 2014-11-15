@@ -1,0 +1,238 @@
+import java.util.*;
+import java.io.*;
+import java.net.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+
+public class As2Web extends javax.swing.JFrame {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public As2Web() {
+        initAll();
+    }
+    private void initAll() {
+
+        jLabel1 = new JLabel();
+        jLabel2 = new JLabel();
+        URL1 = new JTextField();
+        URL2 = new JTextField();
+        GetPage = new JButton();
+        jScrollPane1 = new JScrollPane();
+        showURL1 = new JEditorPane();
+        jScrollPane2 = new JScrollPane();
+        showURL2 = new JEditorPane();
+        jScrollPane3 = new JScrollPane();
+        Header = new JEditorPane();
+        jScrollPane4 = new JScrollPane();
+        Thread = new JEditorPane();
+        jLabel3 = new JLabel();
+        jLabel4 = new JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Jenjira Lomchan s5050255@kmitl.ac.th - Java Web Browser (Network Programming Class Assignment)");
+
+        jLabel1.setText("URL1");
+
+        jLabel2.setText("URL2");
+
+        GetPage.setText("Get Page");
+        GetPage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                GetPageActionPerformed(evt);
+            }
+        });
+
+        jScrollPane1.setViewportView(showURL1);
+
+        jScrollPane2.setViewportView(showURL2);
+
+        jScrollPane3.setViewportView(Header);
+
+        jScrollPane4.setViewportView(Thread);
+
+        jLabel3.setText("Header");
+
+        jLabel4.setText("Thread");
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane3, GroupLayout.Alignment.LEADING)
+                            .addComponent(URL1, GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE,550, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel2)))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane4, GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+                            .addComponent(URL2)
+                            .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE,550, Short.MAX_VALUE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(GetPage)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(URL1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(URL2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
+                    .addComponent(GetPage))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 100, GroupLayout.DEFAULT_SIZE)
+                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 100, GroupLayout.DEFAULT_SIZE))
+                .addGap(50, 50, 50)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addContainerGap())
+        );
+
+        pack();
+    }
+
+    private void GetPageActionPerformed(java.awt.event.ActionEvent evt) {
+        MyThread link1 = new MyThread(URL1.getText(), "Thread1");
+        MyThread link2 = new MyThread(URL2.getText(), "Thread2");
+        link1.start();
+        link2.start();
+    }
+
+    public void ShowHeader(String URL, String Thread) {
+        String url = URL;
+        String thread = Thread;
+        try {
+
+            URL obj = new URL(url);
+            URLConnection conn = obj.openConnection();
+            Map<String, List<String>> map = conn.getHeaderFields();
+            Header.setText(Header.getText() + thread + " :\n");
+
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                Header.setText(Header.getText() + "Key : " + entry.getKey() + " ,Value : " + entry.getValue() + "\n");
+            }
+            Header.setText(Header.getText() + "\nGet HTTP Header For : " + thread + "\n");
+            String server = conn.getHeaderField("Server");
+
+            if (server == null) {
+                Header.setText(Header.getText() + "'Server' is not found!\n");
+            } else {
+                Header.setText(Header.getText() + "Server : " + server + "\n");
+            }
+            Header.setText(Header.getText() + "Done\n____________end____________\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public class MyThread extends Thread {
+
+        String link, thrNo;
+        int delay = 3000;
+
+        public MyThread(String url, String no) {
+            link = url;
+            thrNo = no;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                Thread.setText(Thread.getText() + thrNo + " : Start \n");
+
+                if (thrNo.equals("Thread1")) {
+                    showURL1.setPage(link);
+
+                }
+                if (thrNo.equals("Thread2")) {
+                    showURL2.setPage(link);
+
+                }
+
+                Thread.setText(Thread.getText() + thrNo + " : Get Page\n");
+
+                Thread.setText(Thread.getText() + thrNo + " : Print Header \n");
+
+                ShowHeader(link, thrNo);
+
+                Thread.setText(Thread.getText() + thrNo + " : Finish \n");
+            } catch (IOException ex) {
+                printf("cannot show");
+            }
+        }
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(As2Web.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(As2Web.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(As2Web.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(As2Web.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new As2Web().setVisible(true);
+            }
+        });
+    }
+
+    private javax.swing.JButton GetPage;
+    private javax.swing.JEditorPane Header;
+    private javax.swing.JEditorPane Thread;
+    private javax.swing.JTextField URL1;
+    private javax.swing.JTextField URL2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JEditorPane showURL1;
+    private javax.swing.JEditorPane showURL2;
+    
+    private void printf(String string) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+}
